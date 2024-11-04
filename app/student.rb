@@ -26,20 +26,11 @@ class Student
   
 
     def self.add_student(surname, name, date_of_birth)
-        student_exists = false
-      
-        @@students.each do |s|
-          if s.surname == surname && s.name == name && s.date_of_birth == date_of_birth
-            student_exists = true
-            break  
-          end
+        if @@students.any? { |s| s.surname == surname && s.name == name && s.date_of_birth == date_of_birth }
+        raise StandardError, "Student already exists"
         end
-      
-        unless student_exists
-          Student.new(surname, name, date_of_birth)  
-        end
-      end
-      
+        Student.new(surname, name, date_of_birth)
+      end    
 
       def self.remove_student(student)
         @@students.delete(student)
@@ -53,16 +44,17 @@ class Student
         @@students.select { |student| student.name == name }
       end
 
-
       def self.all_students
         @@students
       end
-
 
       def to_s
         "#{@surname} #{@name}, Date of Birth: #{@date_of_birth}, Age: #{calculate_age}"
       end
 
+      def self.clear_all_students
+        @@students.clear
+      end
 
       def validate_date(date_of_birth)
         if date_of_birth > Date.today
